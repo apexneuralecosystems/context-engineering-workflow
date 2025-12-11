@@ -211,15 +211,36 @@ class ResearchAssistantFlow(Flow[ResearchAssistantState]):
     
     def _parse_agent_result(self, raw_result: str) -> Dict[str, Any]:
         try:
-            return json.loads(raw_result)
+            parsed = json.loads(raw_result)
+            # Ensure status is set - if it's missing, try to infer from content
+            if "status" not in parsed:
+                if "error" in parsed or "Error" in str(parsed):
+                    parsed["status"] = "ERROR"
+                elif not parsed.get("answer") and not parsed.get("citations"):
+                    parsed["status"] = "INSUFFICIENT_CONTEXT"
+                else:
+                    parsed["status"] = "OK"
+            return parsed
         except json.JSONDecodeError:
-            return {
-                "status": "OK",
-                "source_used": "UNKNOWN",
-                "answer": raw_result,
-                "citations": [],
-                "confidence": 0.5
-            }
+            # If it's not JSON, check if it looks like an error
+            raw_lower = raw_result.lower()
+            if "error" in raw_lower or "failed" in raw_lower:
+                return {
+                    "status": "ERROR",
+                    "source_used": "UNKNOWN",
+                    "answer": raw_result,
+                    "error": raw_result,
+                    "citations": [],
+                    "confidence": 0.0
+                }
+            else:
+                return {
+                    "status": "OK",
+                    "source_used": "UNKNOWN",
+                    "answer": raw_result,
+                    "citations": [],
+                    "confidence": 0.5
+                }
     
     def _summarize_for_memory(self, response: str, max_length: int = 2000) -> str:
         if len(response) <= max_length:

@@ -459,6 +459,7 @@ def display_citations_dropdown(response: Dict[str, Any], key: str):
                         elif source_name == 'ArXiv Papers':
                             answer = source_data.get('answer', '')
                             status = source_data.get('status', 'UNKNOWN')
+                            error_msg = source_data.get('error', '')
                             
                             # Check if answer is a JSON string that needs parsing
                             if answer and isinstance(answer, str):
@@ -468,6 +469,7 @@ def display_citations_dropdown(response: Dict[str, Any], key: str):
                                     # Update answer and status from parsed JSON
                                     answer = parsed_answer.get('answer', answer)
                                     status = parsed_answer.get('status', status)
+                                    error_msg = parsed_answer.get('error', error_msg)
                                     papers_found = parsed_answer.get('papers_found', 0)
                                     
                                     # Display the answer (which contains formatted paper info)
@@ -488,30 +490,60 @@ def display_citations_dropdown(response: Dict[str, Any], key: str):
                                                     else:
                                                         st.markdown(f"• **{label}**")
                                     elif status == 'INSUFFICIENT_CONTEXT':
-                                        st.info(answer)
+                                        st.info(answer if answer else "No papers found for the query.")
                                     elif status == 'ERROR':
-                                        error_msg = parsed_answer.get('error', answer)
-                                        st.error(f"ArXiv search error: {error_msg}")
+                                        # Show detailed error message
+                                        if error_msg:
+                                            st.error(f"**ArXiv Search Error:** {error_msg}")
+                                        elif answer:
+                                            st.error(f"**ArXiv Search Error:** {answer}")
+                                        else:
+                                            st.error("**ArXiv Search Error:** Unknown error occurred. This may be due to network issues, API timeout, or invalid query format.")
+                                        
+                                        # Provide troubleshooting tips
+                                        st.info("💡 **Troubleshooting:**\n- Check your internet connection\n- Try a different search query\n- The ArXiv API may be temporarily unavailable")
                                     else:
                                         st.markdown("**ArXiv Response:**")
                                         st.markdown(f"```\n{answer[:500]}...\n```")
-                                except json.JSONDecodeError:
+                                except json.JSONDecodeError as json_err:
                                     # Answer is not JSON, display as-is
                                     if status == 'ERROR':
-                                        st.error(f"ArXiv error: {answer}")
+                                        if answer:
+                                            st.error(f"**ArXiv Error:** {answer}")
+                                        elif error_msg:
+                                            st.error(f"**ArXiv Error:** {error_msg}")
+                                        else:
+                                            st.error("**ArXiv Error:** Failed to parse response. This may indicate a network issue or API error.")
                                     else:
                                         st.markdown("**ArXiv Response:**")
                                         st.markdown(answer[:1000] if len(answer) > 1000 else answer)
                             else:
                                 # Answer is already a dict or empty
                                 if status == 'ERROR':
-                                    error_msg = source_data.get('error', source_data.get('answer', 'Unknown error'))
-                                    st.error(f"ArXiv error: {error_msg}")
+                                    # Try to get error message from various sources
+                                    if error_msg:
+                                        st.error(f"**ArXiv Search Error:** {error_msg}")
+                                    elif isinstance(answer, str) and answer:
+                                        st.error(f"**ArXiv Search Error:** {answer}")
+                                    elif isinstance(answer, dict):
+                                        error_from_dict = answer.get('error', answer.get('answer', 'Unknown error'))
+                                        st.error(f"**ArXiv Search Error:** {error_from_dict}")
+                                    else:
+                                        st.error("**ArXiv Search Error:** Unknown error occurred. The ArXiv API may be unavailable or the query format may be invalid.")
+                                    
+                                    # Provide troubleshooting tips
+                                    st.info("💡 **Troubleshooting:**\n- Check your internet connection\n- Try a different search query\n- The ArXiv API may be temporarily unavailable")
                                 elif answer:
                                     st.markdown("**ArXiv Response:**")
-                                    st.markdown(str(answer)[:1000])
+                                    if isinstance(answer, str):
+                                        st.markdown(answer[:1000] if len(answer) > 1000 else answer)
+                                    else:
+                                        st.markdown(str(answer)[:1000])
                                 else:
-                                    st.info("No ArXiv results available")
+                                    if status == 'UNKNOWN':
+                                        st.warning("⚠️ ArXiv search status is unknown. The tool may not have been called or returned an unexpected response.")
+                                    else:
+                                        st.info("No ArXiv results available")
                         
                         elif source_name == 'RAG (Documents)':
                             # Handle RAG source specifically

@@ -121,3 +121,8 @@ test_tensorlake.py
 diagnose_rag.py
 fix_indent.py
 
+# Project completion templates
+*project_completion*.md
+*project_completion*.docx
+*PROJECT_COMPLETION*.md
+
