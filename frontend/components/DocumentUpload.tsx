@@ -2,8 +2,8 @@
 
 import { useState, useRef } from 'react'
 import { Upload, FileText, CheckCircle2, AlertCircle, Loader2, X } from 'lucide-react'
-import { uploadDocument, DocumentUploadResponse } from '../lib/api'
-import { cn } from '../lib/utils'
+import { uploadDocument, DocumentUploadResponse } from '@/lib/api'
+import { cn } from '@/lib/utils'
 
 interface DocumentUploadProps {
   onUploadSuccess: (documentName: string) => void

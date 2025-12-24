@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { Bot, FileText, CheckCircle2, AlertCircle, ArrowLeft, Loader2 } from 'lucide-react'
-import ChatInterface from '../../components/ChatInterface'
-import DocumentUpload from '../../components/DocumentUpload'
-import { initializeAssistant, getAssistantStatus, AssistantStatus } from '../../lib/api'
+import ChatInterface from '@/components/ChatInterface'
+import DocumentUpload from '@/components/DocumentUpload'
+import { initializeAssistant, getAssistantStatus, AssistantStatus } from '@/lib/api'
 import Link from 'next/link'
 
 export default function AppPage() {

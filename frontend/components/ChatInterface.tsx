@@ -2,9 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { Send, Loader2, RefreshCw, FileText, Bot, User } from 'lucide-react'
-import { searchQuery, QueryResponse } from '../lib/api'
+import { searchQuery, QueryResponse } from '@/lib/api'
 import ResponseDisplay from './ResponseDisplay'
-import { cn } from '../lib/utils'
+import { cn } from '@/lib/utils'
 
 interface ChatMessage {
   id: string

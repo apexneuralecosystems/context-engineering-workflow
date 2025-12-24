@@ -7,14 +7,22 @@ const nextConfig = {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8003',
   },
   webpack: (config) => {
-    // Explicitly set alias for @ to point to project root
     const rootPath = path.resolve(__dirname)
+    
+    // Set up aliases
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': rootPath,
     }
     
-    // Ensure extensions are resolved
+    // Ensure proper module resolution
+    config.resolve.modules = [
+      rootPath,
+      path.resolve(rootPath, 'node_modules'),
+      'node_modules',
+    ]
+    
+    // Ensure extensions are resolved in order
     config.resolve.extensions = [
       '.js',
       '.jsx',
