@@ -59,18 +59,53 @@ app = FastAPI(
 )
 
 # CORS middleware - get frontend port from environment
-FRONTEND_PORT = os.getenv("FRONTEND_PORT", "3003")
+FRONTEND_PORT = os.getenv("FRONTEND_PORT")
+if not FRONTEND_PORT:
+    raise ValueError("FRONTEND_PORT environment variable is required. Please set it in .env file.")
+
 FRONTEND_URL = f"http://localhost:{FRONTEND_PORT}"
 FRONTEND_URL_127 = f"http://127.0.0.1:{FRONTEND_PORT}"
 
+# Get additional allowed origins from environment (comma-separated)
+# Supports formats like:
+# CORS_ORIGINS=https://example.com,https://www.example.com
+# CORS_ORIGINS=https://example.com, http://localhost:3000
+CORS_ORIGINS_ENV = os.getenv("CORS_ORIGINS", "")
+ADDITIONAL_ORIGINS = []
+
+if CORS_ORIGINS_ENV:
+    # Split by comma and clean up each origin
+    ADDITIONAL_ORIGINS = [
+        origin.strip() 
+        for origin in CORS_ORIGINS_ENV.split(",") 
+        if origin.strip()
+    ]
+    # Remove trailing slashes for consistency
+    ADDITIONAL_ORIGINS = [origin.rstrip('/') for origin in ADDITIONAL_ORIGINS]
+
+# Build complete list of allowed origins
+ALLOWED_ORIGINS = [
+    FRONTEND_URL,
+    FRONTEND_URL_127,
+    *ADDITIONAL_ORIGINS,
+]
+
+# Log CORS configuration for debugging (only in development)
+if os.getenv("DEBUG", "").lower() in ("true", "1", "yes"):
+    print(f"\n{'='*80}")
+    print("CORS Configuration:")
+    print(f"  FRONTEND_PORT: {FRONTEND_PORT}")
+    print(f"  Localhost URLs: {FRONTEND_URL}, {FRONTEND_URL_127}")
+    if ADDITIONAL_ORIGINS:
+        print(f"  Additional Origins: {', '.join(ADDITIONAL_ORIGINS)}")
+    else:
+        print("  Additional Origins: None (set CORS_ORIGINS in .env for production)")
+    print(f"  Total Allowed Origins: {len(ALLOWED_ORIGINS)}")
+    print(f"{'='*80}\n")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        FRONTEND_URL,
-        FRONTEND_URL_127,
-        "http://localhost:3000",  # Fallback for other setups
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -405,7 +440,10 @@ async def query(request: Request, query_request: QueryRequest):
 
 
 if __name__ == "__main__":
-    port = int(os.getenv("API_PORT", 8003))
+    api_port = os.getenv("API_PORT")
+    if not api_port:
+        raise ValueError("API_PORT environment variable is required. Please set it in .env file.")
+    port = int(api_port)
     uvicorn.run(
         "api_server:app",
         host="0.0.0.0",
