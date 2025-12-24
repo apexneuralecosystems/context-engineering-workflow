@@ -440,10 +440,14 @@ async def query(request: Request, query_request: QueryRequest):
 
 
 if __name__ == "__main__":
+    # Get API port from environment variable (required)
+    # Set API_PORT in .env file (e.g., API_PORT=8003)
     api_port = os.getenv("API_PORT")
     if not api_port:
         raise ValueError("API_PORT environment variable is required. Please set it in .env file.")
     port = int(api_port)
+    
+    print(f"Starting API server on port {port} (from API_PORT environment variable)")
     uvicorn.run(
         "api_server:app",
         host="0.0.0.0",

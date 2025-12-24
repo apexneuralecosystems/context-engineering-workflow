@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { getUserFriendlyError } from './errorHandler'
 
 // Get API URL from environment variable (required)
 const API_URL = process.env.NEXT_PUBLIC_API_URL
@@ -82,14 +83,7 @@ export async function initializeAssistant(): Promise<AssistantStatus> {
     )
     return handleResponse(response.data)
   } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      const apiResponse = error.response?.data as APIResponse
-      if (apiResponse?.message) {
-        throw new Error(apiResponse.message)
-      }
-      throw new Error(error.response?.data?.detail || error.message || 'Failed to initialize assistant')
-    }
-    throw new Error('An unexpected error occurred')
+    throw new Error(getUserFriendlyError(error, 'initialize'))
   }
 }
 
@@ -113,14 +107,7 @@ export async function uploadDocument(file: File): Promise<DocumentUploadResponse
     )
     return handleResponse(response.data)
   } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      const apiResponse = error.response?.data as APIResponse
-      if (apiResponse?.message) {
-        throw new Error(apiResponse.message)
-      }
-      throw new Error(error.response?.data?.detail || error.message || 'Failed to upload document')
-    }
-    throw new Error('An unexpected error occurred')
+    throw new Error(getUserFriendlyError(error, 'upload'))
   }
 }
 
@@ -145,14 +132,7 @@ export async function searchQuery(query: string, user_id?: string, thread_id?: s
     )
     return handleResponse(response.data)
   } catch (error: any) {
-    if (axios.isAxiosError(error)) {
-      const apiResponse = error.response?.data as APIResponse
-      if (apiResponse?.message) {
-        throw new Error(apiResponse.message)
-      }
-      throw new Error(error.response?.data?.detail || error.message || 'Failed to process query')
-    }
-    throw new Error('An unexpected error occurred')
+    throw new Error(getUserFriendlyError(error, 'query'))
   }
 }
 
