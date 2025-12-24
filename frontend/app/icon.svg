@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Background circle with gradient -->
+  <circle cx="32" cy="32" r="30" fill="url(#gradient)"/>
+  
+  <!-- Document/Paper icon representing research -->
+  <path d="M20 18h20v28H20V18z" fill="white" opacity="0.9"/>
+  <path d="M20 18h20v4H20v-4z" fill="url(#gradient2)"/>
+  <line x1="24" y1="26" x2="36" y2="26" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="24" y1="30" x2="36" y2="30" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="24" y1="34" x2="32" y2="34" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <!-- AI/Neural network nodes representing intelligence -->
+  <circle cx="44" cy="24" r="3" fill="#10B981"/>
+  <circle cx="48" cy="32" r="3" fill="#10B981"/>
+  <circle cx="44" cy="40" r="3" fill="#10B981"/>
+  <line x1="44" y1="24" x2="48" y2="32" stroke="#10B981" stroke-width="1.5" opacity="0.6"/>
+  <line x1="48" y1="32" x2="44" y2="40" stroke="#10B981" stroke-width="1.5" opacity="0.6"/>
+  
+  <!-- Gradient definitions -->
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="gradient2" x1="20" y1="18" x2="40" y2="22" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </linearGradient>
+  </defs>
+</svg>
+

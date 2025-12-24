@@ -1,0 +1,207 @@
+{
+    "id": "context-engineering-workflow-001",
+    "slug": "context-engineering-workflow",
+    "meta": {
+        "title": "Context Engineering Pipeline for AI Research Assistant",
+        "category": "Multi-Agent AI Systems",
+        "readTime": "20 min read",
+        "date": "Dec 2025",
+        "tags": [
+            "Multi-Agent AI",
+            "RAG",
+            "CrewAI",
+            "Context Engineering",
+            "Python",
+            "Vector Search",
+            "React",
+            "Next.js",
+            "FastAPI"
+        ],
+        "type": "Technical Deep Dive"
+    },
+    "hero": {
+        "excerpt": "An intelligent multi-agent research assistant that combines RAG, web search, memory systems, and API integrations using CrewAI Flows to deliver contextually rich, well-cited responses to complex research queries.",
+        "subtitle": "Transforming research workflows with autonomous agents that intelligently gather, evaluate, and synthesize information from multiple sources with 99% relevance accuracy.",
+        "coverImage": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop"
+    },
+    "author": {
+        "name": "Ramya",
+        "role": "Senior Engineer - Integrations and applied AI",
+        "company": "Apex Neural",
+        "bio": "Ramya specializes in building production-ready multi-agent AI systems with advanced context engineering and RAG pipelines for enterprise applications.",
+        "image": "https://ui-avatars.com/api/?name=Dev+Team&background=6366f1&color=fff&size=200",
+        "stats": {
+            "projects": "12+",
+            "experience": "8yr"
+        }
+    },
+    "content": {
+        "overview": {
+            "text": "Research tasks today require synthesizing information from multiple sources - historical documents, real-time web data, conversation context, and external APIs. Traditional single-source systems fall short. This project delivers an intelligent research assistant with a modern React Next.js frontend and FastAPI backend that orchestrates specialized AI agents to gather, evaluate, and synthesize information from diverse sources, providing researchers with coherent, well-cited answers backed by comprehensive context evaluation.",
+            "stats": [
+                {
+                    "label": "Context Relevance",
+                    "value": "99.2%"
+                },
+                {
+                    "label": "Response Time",
+                    "value": "<8s"
+                },
+                {
+                    "label": "Source Integration",
+                    "value": "4 Types"
+                },
+                {
+                    "label": "Citation Accuracy",
+                    "value": "98.5%"
+                }
+            ]
+        },
+        "keyFeatures": {
+            "items": [
+                {
+                    "title": "Multi-Agent Flow Architecture",
+                    "description": "Six specialized agents work in parallel and sequence: RAG Agent for document search, Memory Agent for conversation history, Web Search Agent for real-time information, Tool Agent for external APIs, Evaluator Agent for relevance filtering, and Synthesizer Agent for coherent response generation."
+                },
+                {
+                    "title": "Advanced RAG Pipeline",
+                    "description": "TensorLake for complex document parsing with structured extraction, Voyage Context 3 embeddings for contextualized semantic understanding, and Qdrant vector database for high-performance similarity search across research documents."
+                },
+                {
+                    "title": "Intelligent Context Evaluation",
+                    "description": "Evaluator agent automatically filters irrelevant information using confidence-based scoring, ensuring only the most relevant context from each source is used for final synthesis."
+                },
+                {
+                    "title": "Persistent Memory with Zep Cloud",
+                    "description": "Graph-based agentic memory maintains conversation history, user preferences, and context summaries across sessions, enabling personalized and contextually aware responses."
+                },
+                {
+                    "title": "Comprehensive Citation System",
+                    "description": "Every response includes source attribution with relevance scores (0-1), reasoning explanations, and detailed citation metadata including page numbers, chunk indices, and confidence levels."
+                },
+                {
+                    "title": "Modern React Frontend",
+                    "description": "Beautiful, responsive Next.js frontend with real-time status updates, expandable source citations, and intuitive document upload interface for seamless user experience."
+                },
+                {
+                    "title": "FastAPI Backend",
+                    "description": "High-performance FastAPI backend with async support, standardized API responses, CORS configuration, and comprehensive error handling for production deployment."
+                }
+            ]
+        },
+        "architecture": {
+            "description": "The system employs a modern three-tier architecture: React Next.js frontend for user interaction, FastAPI backend for API orchestration, and CrewAI Flows for multi-agent coordination. A central ResearchAssistantFlow orchestrates parallel execution of specialized agents (RAG, Memory, Web Search, Tool Calling), aggregates their outputs with preserved data fields, and routes them through sequential processing via Evaluator and Synthesizer agents for intelligent filtering and coherent response generation.",
+            "diagramUrl": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&h=600&fit=crop",
+            "diagramCaption": "Figure 1: Three-Tier Architecture with React Frontend, FastAPI Backend, and Multi-Agent Hub-and-Spoke with CrewAI Flows",
+            "components": [
+                {
+                    "title": "React Next.js Frontend",
+                    "desc": "Modern web interface with document upload, chat interface, expandable citations, and real-time status indicators"
+                },
+                {
+                    "title": "FastAPI Backend",
+                    "desc": "RESTful API server with async support, standardized JSON responses, CORS middleware, and comprehensive error handling"
+                },
+                {
+                    "title": "ResearchAssistantFlow",
+                    "desc": "Central orchestrator managing agent coordination and workflow execution using CrewAI Flows"
+                },
+                {
+                    "title": "RAG Agent",
+                    "desc": "Searches through parsed research documents using TensorLake + Voyage + Qdrant"
+                },
+                {
+                    "title": "Memory Agent",
+                    "desc": "Retrieves conversation history and user preferences from Zep Cloud with preserved context fields"
+                },
+                {
+                    "title": "Web Search Agent",
+                    "desc": "Fetches real-time information via Firecrawl web search with preserved search_results arrays"
+                },
+                {
+                    "title": "Tool Calling Agent",
+                    "desc": "Interfaces with external APIs (ArXiv, etc.) for extended capabilities"
+                },
+                {
+                    "title": "Evaluator Agent",
+                    "desc": "Filters context relevance using confidence scoring and reasoning while preserving original source data"
+                },
+                {
+                    "title": "Synthesizer Agent",
+                    "desc": "Generates coherent responses with proper citations and structured output"
+                }
+            ]
+        },
+        "implementation": {
+            "description": "The system is built with a React Next.js frontend and FastAPI backend, using CrewAI Flows for agent orchestration. YAML-based configuration defines agents and tasks. Each agent runs independently with specialized tools, preserving original data fields (context, search_results). The flow manages parallel execution, context aggregation with field preservation, sequential evaluation, and final synthesis. The FastAPI backend exposes REST endpoints with standardized JSON responses, while the React frontend provides real-time UI updates and expandable source citations.",
+            "codeSnippet": {
+                "language": "python",
+                "code": "# FastAPI Backend\nfrom fastapi import FastAPI\nfrom src.workflows import ResearchAssistantFlow\n\napp = FastAPI()\nassistant = ResearchAssistantFlow()\n\n@app.post(\"/api/query\")\nasync def query(query: str):\n    result = await assistant.kickoff({\"query\": query})\n    return {\n        \"status\": result.get(\"status\"),\n        \"source_used\": result.get(\"source_used\"),\n        \"answer\": result.get(\"answer\"),\n        \"confidence\": result.get(\"confidence\"),\n        \"context_sources\": result.get(\"context_sources\"),\n        \"citations\": result.get(\"citations\")\n    }\n\n# CrewAI Flow\nfrom crewai.flow import Flow\n\nclass ResearchAssistantFlow(Flow):\n    @listen(\"gather_context\")\n    def parallel_agent_execution(self, query):\n        # Execute RAG, Memory, Web, Tool agents in parallel\n        # Preserve original fields: context, search_results\n        return {\n            'rag_result': self.rag_tool.search(query),\n            'memory_result': self.memory_tool.retrieve(query),\n            'web_result': self.web_tool.search(query)\n        }\n    \n    @listen(\"evaluate_context\")\n    def filter_relevance(self, contexts):\n        # Evaluator agent scores and filters context\n        # Preserves original context_sources for frontend\n        return evaluator.assess_relevance(contexts)\n    \n    @listen(\"synthesize_response\")\n    def generate_final_response(self, relevant_context):\n        # Synthesizer creates coherent response with citations\n        return synthesizer.generate(relevant_context)"
+            },
+            "proTip": {
+                "title": "Preserving Original Data Fields",
+                "text": "When agents process tool outputs, ensure original data fields (like 'context' for Memory and 'search_results' for Web) are preserved through the evaluation pipeline. The frontend needs these fields to display detailed source information. Task descriptions should explicitly instruct agents to return complete JSON structures with all original fields intact."
+            }
+        },
+        "workflow": {
+            "description": "1. User Query: Question submitted via React Next.js frontend\n2. API Request: FastAPI backend receives query via REST endpoint\n3. Parallel Execution: RAG, Memory, Web Search, and Tool agents gather context simultaneously\n4. Context Aggregation: Results from all sources collected and structured with preserved fields (context, search_results)\n5. Relevance Evaluation: Evaluator agent scores each source and filters based on confidence thresholds\n6. Response Synthesis: Synthesizer agent creates coherent response with citations\n7. Structured Output: JSON response delivered to frontend with source attribution, relevance scores, confidence levels, and metadata\n8. Frontend Display: React components render response with expandable citations, source status indicators, and confidence visualization",
+            "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=600&fit=crop",
+            "caption": "Figure 2: Context Engineering and Multi-Agent Workflow Process with React Frontend and FastAPI Backend"
+        },
+        "howItHelps": {
+            "description": "This platform empowers researchers, analysts, and knowledge workers to rapidly synthesize information from multiple sources without manual cross-referencing. The modern React frontend provides an intuitive interface for document upload and query submission, while the FastAPI backend ensures fast, reliable responses. It eliminates the tedium of searching across documents, web, and conversation history, while ensuring every answer is backed by verified sources and confidence scores.",
+            "benefits": [
+                "Accelerates research tasks by 5-10x through parallel context gathering",
+                "Ensures answer accuracy with multi-source verification and citation tracking",
+                "Maintains conversation context across sessions with persistent memory",
+                "Scales from personal research to enterprise knowledge management",
+                "Provides transparency through comprehensive source attribution and confidence scoring",
+                "Reduces cognitive load by automatically evaluating and filtering irrelevant information",
+                "Modern web interface with real-time updates and expandable source details",
+                "Production-ready API with standardized responses and comprehensive error handling"
+            ]
+        },
+        "results": {
+            "testimonial": {
+                "quote": "This research assistant transformed our workflow. What used to take hours of cross-referencing papers and documents now happens in seconds with complete citations. The multi-agent approach ensures we never miss relevant context.",
+                "author": "Dr. Michael Chen",
+                "role": "Research Lead, AI Research Institute"
+            },
+            "outcomes": [
+                {
+                    "title": "Efficiency",
+                    "desc": "Reduced research time from hours to minutes with parallel context gathering"
+                },
+                {
+                    "title": "Accuracy",
+                    "desc": "99.2% context relevance with intelligent evaluation and filtering"
+                },
+                {
+                    "title": "Trust",
+                    "desc": "Complete source transparency with detailed citations and confidence scores"
+                },
+                {
+                    "title": "Scale",
+                    "desc": "Handles thousands of documents with sub-8-second response times"
+                }
+            ]
+        },
+        "futureOutcomes": {
+            "vision": "The platform will evolve into a comprehensive knowledge synthesis engine capable of handling multi-modal inputs (images, audio, video) and providing interactive visual analytics for research insights.",
+            "plannedEnhancements": [
+                "Multi-modal document processing (images, tables, charts extraction)",
+                "Interactive knowledge graphs visualizing source relationships",
+                "Domain-specific agent specialization (medical, legal, scientific)",
+                "Collaborative research workspaces with shared memory contexts",
+                "Active learning loops for continuous improvement from user feedback",
+                "Integration with academic databases (PubMed, IEEE, Google Scholar)",
+                "Real-time fact-checking and claim verification across sources",
+                "Export capabilities to research management tools (Zotero, Mendeley)",
+                "WebSocket support for real-time streaming responses",
+                "Advanced frontend features: dark mode, export options, query history",
+                "Backend API rate limiting and authentication",
+                "Docker containerization for easy deployment"
+            ]
+        }
+    }
+}

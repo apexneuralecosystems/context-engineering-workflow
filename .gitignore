@@ -30,6 +30,7 @@ env/
 .venv
 venv.bak/
 venv_backup/
+backend/.venv/
 
 # PyCharm
 .idea/
@@ -117,12 +118,5 @@ ehthumbs.db
 Thumbs.db
 
 # Project-specific
-test_tensorlake.py
-diagnose_rag.py
-fix_indent.py
-
-# Project completion templates
-*project_completion*.md
-*project_completion*.docx
-*PROJECT_COMPLETION*.md
+# Test and diagnostic files (if needed, add them here)
 
