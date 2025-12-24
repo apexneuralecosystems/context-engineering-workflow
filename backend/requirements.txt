@@ -1,0 +1,40 @@
+# Backend dependencies for context-engineering-workflow
+# Generated from pyproject.toml
+
+# Core Framework
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+python-multipart>=0.0.9
+
+# AI & ML
+crewai>=0.165.1
+crewai-tools>=0.0.1
+openai>=1.99.9
+langchain>=0.1.0
+langchain-openai>=0.2.0
+
+# Vector Database
+qdrant-client>=1.7.0
+
+# Document Processing
+tensorlake>=0.2.90
+
+# Embeddings
+voyageai>=0.3.4
+
+# Memory
+zep-crewai>=1.0.0
+zep-cloud>=3.4.0
+
+# Web Scraping
+firecrawl-py>=4.3.0
+
+# Utilities
+python-dotenv>=1.0.0
+requests>=2.31.0
+pydantic>=2.0.0
+pyyaml>=6.0.2
+
+# Development (optional)
+# ipykernel>=6.30.1
+
