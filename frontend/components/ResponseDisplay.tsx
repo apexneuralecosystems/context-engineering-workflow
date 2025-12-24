@@ -14,8 +14,8 @@ import {
   Globe,
   Library
 } from 'lucide-react'
-import { QueryResponse } from '@/lib/api'
-import { cn } from '@/lib/utils'
+import { QueryResponse } from '../lib/api'
+import { cn } from '../lib/utils'
 import CitationsDisplay from './CitationsDisplay'
 
 interface ResponseDisplayProps {
