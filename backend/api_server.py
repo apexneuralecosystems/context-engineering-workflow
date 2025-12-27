@@ -18,6 +18,25 @@ import uvicorn
 # Load environment variables
 load_dotenv()
 
+# IMPORTANT: Configure OpenRouter for CrewAI/litellm BEFORE importing workflows
+# CrewAI uses litellm internally, which reads environment variables at import time
+openrouter_key = os.getenv("OPENROUTER_API_KEY")
+if openrouter_key:
+    # Set environment variables that litellm/CrewAI will use
+    os.environ["OPENAI_API_KEY"] = openrouter_key
+    os.environ["OPENAI_API_BASE"] = "https://openrouter.ai/api/v1"
+    os.environ["LITELLM_API_BASE"] = "https://openrouter.ai/api/v1"
+    
+    # Log for debugging
+    if os.getenv("DEBUG", "").lower() in ("true", "1", "yes"):
+        print(f"\n{'='*80}")
+        print("Pre-import OpenRouter Configuration:")
+        print(f"  OPENROUTER_API_KEY: SET")
+        print(f"  OPENAI_API_KEY: SET (OpenRouter key)")
+        print(f"  OPENAI_API_BASE: {os.environ.get('OPENAI_API_BASE')}")
+        print(f"  LITELLM_API_BASE: {os.environ.get('LITELLM_API_BASE')}")
+        print(f"{'='*80}\n")
+
 from src.workflows import ResearchAssistantFlow
 
 # Generic response model
