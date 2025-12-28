@@ -1,6 +1,7 @@
 import os
 from crewai import Agent
 from typing import Optional
+from langchain_openai import ChatOpenAI
 
 from src.config import ConfigLoader
 from src.tools import (
@@ -30,29 +31,36 @@ class Agents:
                 "Get your API key from: https://openrouter.ai/"
             )
         
-        # Configure for OpenRouter - set environment variables that litellm will use
-        # CrewAI uses litellm internally, which can use OPENAI_API_KEY with base_url
-        # IMPORTANT: Set these BEFORE any CrewAI agents are created
+        # Configure environment variables for litellm (CrewAI uses litellm internally)
         os.environ["OPENAI_API_KEY"] = openrouter_key
         os.environ["OPENAI_API_BASE"] = "https://openrouter.ai/api/v1"
-        
-        # Also set litellm-specific variables
         os.environ["LITELLM_API_BASE"] = "https://openrouter.ai/api/v1"
         
+        # Create explicit LangChain LLM with OpenRouter configuration
+        # This ensures the base_url is explicitly set and not relying on environment variables
+        llm = ChatOpenAI(
+            model="openai/gpt-4o-mini",  # OpenRouter model format
+            api_key=openrouter_key,
+            base_url="https://openrouter.ai/api/v1",
+            default_headers={
+                "HTTP-Referer": os.getenv("OPENROUTER_REFERER", "https://github.com/your-repo"),
+                "X-Title": os.getenv("OPENROUTER_APP_NAME", "Research Assistant")
+            },
+            temperature=0.2
+        )
+        
         # Log for debugging
-        if os.getenv("DEBUG", "").lower() in ("true", "1", "yes"):
-            print(f"\n{'='*80}")
-            print("CrewAI/LiteLLM OpenRouter Configuration:")
-            print(f"  OPENROUTER_API_KEY: SET")
-            print(f"  OPENAI_API_KEY: SET (OpenRouter key)")
-            print(f"  OPENAI_API_BASE: {os.environ.get('OPENAI_API_BASE')}")
-            print(f"  LITELLM_API_BASE: {os.environ.get('LITELLM_API_BASE')}")
-            print(f"{'='*80}\n")
+        print(f"\n{'='*80}")
+        print("CrewAI/LiteLLM OpenRouter Configuration:")
+        print(f"  OPENROUTER_API_KEY: SET")
+        print(f"  OPENAI_API_KEY: SET (OpenRouter key)")
+        print(f"  OPENAI_API_BASE: {os.environ.get('OPENAI_API_BASE')}")
+        print(f"  LITELLM_API_BASE: {os.environ.get('LITELLM_API_BASE')}")
+        print(f"  Using explicit ChatOpenAI with base_url: https://openrouter.ai/api/v1")
+        print(f"  Model: openai/gpt-4o-mini")
+        print(f"{'='*80}\n")
         
-        # Return model string in OpenRouter format
-        model = "openai/gpt-4o-mini"  # OpenRouter model format
-        
-        return model
+        return llm
     
     def create_rag_agent(self, rag_pipeline: RAGPipeline) -> Agent:
         config = self.config_loader.get_agent_config("rag_agent")
