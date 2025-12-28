@@ -20,44 +20,37 @@ class Agents:
         self.llm = llm or self._create_default_llm()
     
     def _create_default_llm(self):
-        """Configure LLM for CrewAI agents using OpenRouter if available, otherwise OpenAI"""
-        # Check for OpenRouter first
+        """Configure LLM for CrewAI agents using OpenRouter (required)"""
+        # This project uses OpenRouter exclusively
         openrouter_key = os.getenv("OPENROUTER_API_KEY")
-        openai_key = os.getenv("OPENAI_API_KEY")
         
-        if openrouter_key:
-            # Configure for OpenRouter - set environment variables that litellm will use
-            # CrewAI uses litellm internally, which can use OPENAI_API_KEY with base_url
-            # IMPORTANT: Set these BEFORE any CrewAI agents are created
-            os.environ["OPENAI_API_KEY"] = openrouter_key
-            os.environ["OPENAI_API_BASE"] = "https://openrouter.ai/api/v1"
-            
-            # Also set litellm-specific variables
-            os.environ["LITELLM_API_BASE"] = "https://openrouter.ai/api/v1"
-            
-            # Log for debugging
-            if os.getenv("DEBUG", "").lower() in ("true", "1", "yes"):
-                print(f"\n{'='*80}")
-                print("CrewAI/LiteLLM OpenRouter Configuration:")
-                print(f"  OPENROUTER_API_KEY: SET")
-                print(f"  OPENAI_API_KEY: SET (OpenRouter key)")
-                print(f"  OPENAI_API_BASE: {os.environ.get('OPENAI_API_BASE')}")
-                print(f"  LITELLM_API_BASE: {os.environ.get('LITELLM_API_BASE')}")
-                print(f"{'='*80}\n")
-            
-            # Return model string in OpenRouter format
-            model = "openai/gpt-4o-mini"  # OpenRouter model format
-        elif openai_key:
-            # Ensure we're using OpenAI (clear any OpenRouter settings)
-            if "OPENAI_API_BASE" in os.environ:
-                del os.environ["OPENAI_API_BASE"]
-            if "LITELLM_API_BASE" in os.environ:
-                del os.environ["LITELLM_API_BASE"]
-            # Use OpenAI directly
-            model = "gpt-4o-mini"
-        else:
-            # Fallback
-            model = "gpt-4o-mini"
+        if not openrouter_key:
+            raise ValueError(
+                "OPENROUTER_API_KEY is required. Please set it in your .env file.\n"
+                "Get your API key from: https://openrouter.ai/"
+            )
+        
+        # Configure for OpenRouter - set environment variables that litellm will use
+        # CrewAI uses litellm internally, which can use OPENAI_API_KEY with base_url
+        # IMPORTANT: Set these BEFORE any CrewAI agents are created
+        os.environ["OPENAI_API_KEY"] = openrouter_key
+        os.environ["OPENAI_API_BASE"] = "https://openrouter.ai/api/v1"
+        
+        # Also set litellm-specific variables
+        os.environ["LITELLM_API_BASE"] = "https://openrouter.ai/api/v1"
+        
+        # Log for debugging
+        if os.getenv("DEBUG", "").lower() in ("true", "1", "yes"):
+            print(f"\n{'='*80}")
+            print("CrewAI/LiteLLM OpenRouter Configuration:")
+            print(f"  OPENROUTER_API_KEY: SET")
+            print(f"  OPENAI_API_KEY: SET (OpenRouter key)")
+            print(f"  OPENAI_API_BASE: {os.environ.get('OPENAI_API_BASE')}")
+            print(f"  LITELLM_API_BASE: {os.environ.get('LITELLM_API_BASE')}")
+            print(f"{'='*80}\n")
+        
+        # Return model string in OpenRouter format
+        model = "openai/gpt-4o-mini"  # OpenRouter model format
         
         return model
     

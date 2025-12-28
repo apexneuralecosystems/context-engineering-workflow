@@ -62,42 +62,33 @@ class StructuredResponseGen:
         system_prompt: str = SYSTEM_PROMPT,
         rag_template: str = RAG_TEMPLATE,
         temperature: float = 0.2,
-        use_openrouter: bool = False,
+        use_openrouter: bool = True,  # Always use OpenRouter
     ):
-        # Check for OpenRouter API key first, then fall back to OpenAI
-        if use_openrouter or os.getenv("OPENROUTER_API_KEY"):
-            api_key = api_key or os.getenv("OPENROUTER_API_KEY")
-            base_url = "https://openrouter.ai/api/v1"
-            # OpenRouter model names can be prefixed with provider (e.g., "openai/gpt-4o-mini")
-            # or used directly if OpenRouter supports it
-            if not model.startswith(("openai/", "anthropic/", "google/", "meta/", "mistralai/")):
-                # Default to OpenAI provider if no prefix
-                model = f"openai/{model}"
-            # OpenRouter recommends HTTP-Referer header (optional but recommended)
-            default_headers = {
-                "HTTP-Referer": os.getenv("OPENROUTER_REFERER", "https://github.com/your-repo"),
-                "X-Title": os.getenv("OPENROUTER_APP_NAME", "Research Assistant")
-            }
-            provider_name = "OpenRouter"
-        else:
-            api_key = api_key or os.getenv("OPENAI_API_KEY")
-            base_url = None  # Use default OpenAI base URL
-            default_headers = None
-            provider_name = "OpenAI"
+        # This project uses OpenRouter exclusively
+        api_key = api_key or os.getenv("OPENROUTER_API_KEY")
         
-        # Validate that API key is provided
         if not api_key:
-            error_msg = f"❌ {provider_name} API key is required but not found.\n\n"
-            error_msg += "Please set one of the following environment variables:\n"
-            if provider_name == "OpenRouter":
-                error_msg += "  - OPENROUTER_API_KEY (recommended - supports multiple LLM providers)\n"
-                error_msg += "  - OPENAI_API_KEY (fallback)\n"
-            else:
-                error_msg += "  - OPENAI_API_KEY\n"
-                error_msg += "  - OPENROUTER_API_KEY (alternative - supports multiple LLM providers)\n"
-            error_msg += "\nAdd it to your .env file or set it as an environment variable.\n"
-            error_msg += f"Get your API key from: https://{'openrouter.ai' if provider_name == 'OpenRouter' else 'platform.openai.com'}"
-            raise ValueError(error_msg)
+            raise ValueError(
+                "❌ OPENROUTER_API_KEY is required but not found.\n\n"
+                "Please set the following environment variable:\n"
+                "  - OPENROUTER_API_KEY (supports multiple LLM providers: OpenAI, Anthropic, Google, Meta, etc.)\n\n"
+                "Add it to your .env file or set it as an environment variable.\n"
+                "Get your API key from: https://openrouter.ai/"
+            )
+        
+        base_url = "https://openrouter.ai/api/v1"
+        
+        # OpenRouter model names can be prefixed with provider (e.g., "openai/gpt-4o-mini")
+        # or used directly if OpenRouter supports it
+        if not model.startswith(("openai/", "anthropic/", "google/", "meta/", "mistralai/")):
+            # Default to OpenAI provider if no prefix
+            model = f"openai/{model}"
+        
+        # OpenRouter recommends HTTP-Referer header (optional but recommended)
+        default_headers = {
+            "HTTP-Referer": os.getenv("OPENROUTER_REFERER", "https://github.com/your-repo"),
+            "X-Title": os.getenv("OPENROUTER_APP_NAME", "Research Assistant")
+        }
         
         self.client = OpenAI(
             api_key=api_key,
@@ -108,7 +99,7 @@ class StructuredResponseGen:
         self.system_prompt = system_prompt
         self.rag_template = rag_template
         self.temperature = temperature
-        self.is_openrouter = provider_name == "OpenRouter"
+        self.is_openrouter = True  # Always OpenRouter
 
     def generate(
         self,
@@ -157,10 +148,9 @@ class StructuredResponseGen:
             }
             
             # Enable OpenRouter cost tracking
-            if self.is_openrouter:
-                # OpenRouter requires extra_body to include cost data in response
-                request_kwargs["extra_body"] = {"usage": {"include": True}}
-                logger.info("OpenRouter cost tracking enabled")
+            # OpenRouter requires extra_body to include cost data in response
+            request_kwargs["extra_body"] = {"usage": {"include": True}}
+            logger.info("OpenRouter cost tracking enabled")
             
             logger.info("Sending request to LLM for structured response generation...")
             response = self.client.chat.completions.create(**request_kwargs)

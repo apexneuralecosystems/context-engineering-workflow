@@ -20,22 +20,34 @@ load_dotenv()
 
 # IMPORTANT: Configure OpenRouter for CrewAI/litellm BEFORE importing workflows
 # CrewAI uses litellm internally, which reads environment variables at import time
+# This project uses OpenRouter exclusively - no OpenAI fallback
+
 openrouter_key = os.getenv("OPENROUTER_API_KEY")
-if openrouter_key:
-    # Set environment variables that litellm/CrewAI will use
-    os.environ["OPENAI_API_KEY"] = openrouter_key
-    os.environ["OPENAI_API_BASE"] = "https://openrouter.ai/api/v1"
-    os.environ["LITELLM_API_BASE"] = "https://openrouter.ai/api/v1"
-    
-    # Log for debugging
-    if os.getenv("DEBUG", "").lower() in ("true", "1", "yes"):
-        print(f"\n{'='*80}")
-        print("Pre-import OpenRouter Configuration:")
-        print(f"  OPENROUTER_API_KEY: SET")
-        print(f"  OPENAI_API_KEY: SET (OpenRouter key)")
-        print(f"  OPENAI_API_BASE: {os.environ.get('OPENAI_API_BASE')}")
-        print(f"  LITELLM_API_BASE: {os.environ.get('LITELLM_API_BASE')}")
-        print(f"{'='*80}\n")
+
+if not openrouter_key:
+    raise ValueError(
+        "OPENROUTER_API_KEY is required. Please set it in your .env file.\n"
+        "Get your API key from: https://openrouter.ai/\n"
+        "OpenRouter supports multiple LLM providers (OpenAI, Anthropic, Google, Meta, etc.)"
+    )
+
+# Configure OpenRouter - set environment variables that litellm/CrewAI will use
+os.environ["OPENAI_API_KEY"] = openrouter_key  # Use OpenRouter key as OpenAI key for litellm
+os.environ["OPENAI_API_BASE"] = "https://openrouter.ai/api/v1"  # CRITICAL: Set base URL
+os.environ["LITELLM_API_BASE"] = "https://openrouter.ai/api/v1"
+
+# Set OpenRouter-specific headers
+os.environ["OPENROUTER_REFERER"] = os.getenv("OPENROUTER_REFERER", "https://github.com/your-repo")
+os.environ["OPENROUTER_APP_NAME"] = os.getenv("OPENROUTER_APP_NAME", "Research Assistant")
+
+# Log configuration
+print(f"\n{'='*80}")
+print("OpenRouter Configuration (Pre-import):")
+print(f"  OPENROUTER_API_KEY: SET")
+print(f"  OPENAI_API_KEY: {openrouter_key[:20]}... (OpenRouter key)")
+print(f"  OPENAI_API_BASE: {os.environ.get('OPENAI_API_BASE')}")
+print(f"  LITELLM_API_BASE: {os.environ.get('LITELLM_API_BASE')}")
+print(f"{'='*80}\n")
 
 from src.workflows import ResearchAssistantFlow
 
@@ -143,16 +155,36 @@ def get_assistant() -> ResearchAssistantFlow:
     
     if _assistant is None or not _qdrant_initialized:
         try:
+            # Verify OpenRouter configuration is still set before creating assistant
+            openrouter_key = os.getenv("OPENROUTER_API_KEY")
+            if not openrouter_key:
+                raise ValueError("OPENROUTER_API_KEY is required but not found in environment")
+            
+            # Re-verify and enforce OpenRouter settings
+            if os.environ.get("OPENAI_API_BASE") != "https://openrouter.ai/api/v1":
+                print(f"WARNING: OPENAI_API_BASE was changed! Re-setting to OpenRouter URL")
+                os.environ["OPENAI_API_KEY"] = openrouter_key
+                os.environ["OPENAI_API_BASE"] = "https://openrouter.ai/api/v1"
+                os.environ["LITELLM_API_BASE"] = "https://openrouter.ai/api/v1"
+                print(f"  Fixed: OPENAI_API_BASE = {os.environ.get('OPENAI_API_BASE')}")
+            
             _assistant = ResearchAssistantFlow(
                 tensorlake_api_key=os.getenv("TENSORLAKE_API_KEY"),
                 voyage_api_key=os.getenv("VOYAGE_API_KEY"),
-                openai_api_key=os.getenv("OPENAI_API_KEY"),
-                openrouter_api_key=os.getenv("OPENROUTER_API_KEY"),
+                openrouter_api_key=openrouter_key,
                 zep_api_key=os.getenv("ZEP_API_KEY"),
                 firecrawl_api_key=os.getenv("FIRECRAWL_API_KEY"),
                 qdrant_db_path=os.getenv("QDRANT_DB_PATH", os.path.join(os.path.dirname(__file__), "qdrant_db"))
             )
             _qdrant_initialized = True
+            
+            # Log final configuration after assistant creation
+            print(f"\n{'='*80}")
+            print("Assistant Created - Final OpenRouter Configuration:")
+            print(f"  OPENAI_API_KEY: {os.getenv('OPENAI_API_KEY', 'NOT SET')[:20]}...")
+            print(f"  OPENAI_API_BASE: {os.environ.get('OPENAI_API_BASE', 'NOT SET')}")
+            print(f"  LITELLM_API_BASE: {os.environ.get('LITELLM_API_BASE', 'NOT SET')}")
+            print(f"{'='*80}\n")
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

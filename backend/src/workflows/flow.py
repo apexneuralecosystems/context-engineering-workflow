@@ -67,7 +67,6 @@ class ResearchAssistantFlow(Flow[ResearchAssistantState]):
         self,
         tensorlake_api_key: Optional[str] = None,
         voyage_api_key: Optional[str] = None,
-        openai_api_key: Optional[str] = None,
         openrouter_api_key: Optional[str] = None,
         zep_api_key: Optional[str] = None,
         firecrawl_api_key: Optional[str] = None,
@@ -78,7 +77,6 @@ class ResearchAssistantFlow(Flow[ResearchAssistantState]):
         self.rag_pipeline = RAGPipeline(
             tensorlake_api_key=tensorlake_api_key,
             voyage_api_key=voyage_api_key,
-            openai_api_key=openai_api_key,
             openrouter_api_key=openrouter_api_key,
             qdrant_db_path=qdrant_db_path
         )

@@ -11,7 +11,6 @@ class RAGPipeline:
         self,
         tensorlake_api_key: Optional[str] = None,
         voyage_api_key: Optional[str] = None,
-        openai_api_key: Optional[str] = None,
         openrouter_api_key: Optional[str] = None,
         qdrant_db_path: Optional[str] = None,
         collection_name: str = "research_assistant"
@@ -22,14 +21,14 @@ class RAGPipeline:
             db_path=qdrant_db_path,
             collection_name=collection_name
         )
-        # Use OpenRouter if key is provided, otherwise use OpenAI
-        use_openrouter = bool(openrouter_api_key or os.getenv("OPENROUTER_API_KEY"))
-        # Get the appropriate API key - prefer OpenRouter if available
-        if use_openrouter:
-            api_key = openrouter_api_key or os.getenv("OPENROUTER_API_KEY")
-        else:
-            api_key = openai_api_key or os.getenv("OPENAI_API_KEY")
-        self.generator = StructuredResponseGen(api_key=api_key, use_openrouter=use_openrouter)
+        # This project uses OpenRouter exclusively
+        api_key = openrouter_api_key or os.getenv("OPENROUTER_API_KEY")
+        if not api_key:
+            raise ValueError(
+                "OPENROUTER_API_KEY is required. Please set it in your .env file.\n"
+                "Get your API key from: https://openrouter.ai/"
+            )
+        self.generator = StructuredResponseGen(api_key=api_key, use_openrouter=True)
         
     def process_documents(self, document_paths: List[str]) -> Dict[str, Any]:
         results = {
