@@ -131,7 +131,7 @@ export default function ChatInterface({ documentProcessed, onReset }: ChatInterf
             )}
             <div
               className={cn(
-                'max-w-[80%] rounded-lg px-4 py-3',
+                'max-w-[80%] rounded-lg px-4 py-3 overflow-hidden',
                 message.role === 'user'
                   ? 'bg-primary-600 text-white'
                   : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700'
@@ -141,8 +141,8 @@ export default function ChatInterface({ documentProcessed, onReset }: ChatInterf
                 {message.role === 'user' && (
                   <User className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 )}
-                <div className="flex-1">
-                  <p className="whitespace-pre-wrap break-words">{message.content}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="whitespace-pre-wrap break-words overflow-wrap-anywhere">{message.content}</p>
                   {message.role === 'assistant' && message.response && (
                     <div className="mt-4">
                       <ResponseDisplay response={message.response} />

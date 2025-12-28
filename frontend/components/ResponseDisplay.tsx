@@ -58,13 +58,13 @@ export default function ResponseDisplay({ response }: ResponseDisplayProps) {
 
       {/* Answer */}
       {answer && (
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 border border-slate-200 dark:border-slate-700">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 border border-slate-200 dark:border-slate-700 overflow-hidden">
           <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
             <FileText className="w-5 h-5" />
             Answer
           </h2>
           <div className="prose prose-slate dark:prose-invert max-w-none">
-            <p className="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+            <p className="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap break-words overflow-wrap-anywhere">
               {answer}
             </p>
           </div>

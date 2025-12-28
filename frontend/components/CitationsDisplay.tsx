@@ -132,7 +132,7 @@ export default function CitationsDisplay({
                 )}
               </ul>
             ) : (
-              <p className="text-sm text-slate-600 dark:text-slate-400 whitespace-pre-wrap">
+              <p className="text-sm text-slate-600 dark:text-slate-400 whitespace-pre-wrap break-words overflow-wrap-anywhere">
                 {String(context).substring(0, 1000)}
                 {String(context).length > 1000 && '...'}
               </p>
@@ -174,11 +174,11 @@ export default function CitationsDisplay({
                       href={result.url || '#'}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-primary-600 dark:text-primary-400 hover:underline font-medium"
+                      className="text-primary-600 dark:text-primary-400 hover:underline font-medium break-words overflow-wrap-anywhere"
                     >
                       {result.title || `Result ${idx + 1}`}
                     </a>
-                    <p className="text-slate-600 dark:text-slate-400 mt-1">
+                    <p className="text-slate-600 dark:text-slate-400 mt-1 break-words overflow-wrap-anywhere">
                       {String(result.content || '').substring(0, 150)}...
                     </p>
                   </li>
@@ -196,7 +196,7 @@ export default function CitationsDisplay({
               <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 Web Search Content:
               </p>
-              <p className="text-sm text-slate-600 dark:text-slate-400 whitespace-pre-wrap">
+              <p className="text-sm text-slate-600 dark:text-slate-400 whitespace-pre-wrap break-words overflow-wrap-anywhere">
                 {answer.substring(0, 1000)}
                 {answer.length > 1000 && '...'}
               </p>
@@ -217,7 +217,7 @@ export default function CitationsDisplay({
               <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 Retrieved Context:
               </p>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
+              <p className="text-sm text-slate-600 dark:text-slate-400 break-words overflow-wrap-anywhere">
                 {answer.substring(0, 500)}
                 {answer.length > 500 && '...'}
               </p>
@@ -253,7 +253,7 @@ export default function CitationsDisplay({
 
     return (
       <div>
-        <p className="text-sm text-slate-600 dark:text-slate-400">
+        <p className="text-sm text-slate-600 dark:text-slate-400 break-words overflow-wrap-anywhere">
           {sourceData.answer ? String(sourceData.answer).substring(0, 300) : 'No content available'}
           {sourceData.answer && String(sourceData.answer).length > 300 && '...'}
         </p>
@@ -296,17 +296,17 @@ export default function CitationsDisplay({
                 className="flex items-start gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               >
                 <ExternalLink className="w-4 h-4 text-primary-600 dark:text-primary-400 mt-1 flex-shrink-0" />
-                <div className="flex-1">
-                  <p className="font-medium text-slate-900 dark:text-white">
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-slate-900 dark:text-white break-words overflow-wrap-anywhere">
                     {citation.label}
                   </p>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 break-words overflow-wrap-anywhere">
                     {citation.locator}
                     {citation.page_number !== undefined && ` (Page ${citation.page_number})`}
                     {citation.score !== undefined && ` - Score: ${citation.score.toFixed(3)}`}
                   </p>
                   {citation.content && (
-                    <p className="text-xs text-slate-500 dark:text-slate-500 mt-2 italic">
+                    <p className="text-xs text-slate-500 dark:text-slate-500 mt-2 italic break-words overflow-wrap-anywhere">
                       {citation.content.substring(0, 200)}
                       {citation.content.length > 200 && '...'}
                     </p>
