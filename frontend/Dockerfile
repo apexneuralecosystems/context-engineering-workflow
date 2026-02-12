@@ -132,7 +132,7 @@ RUN mkdir -p /var/cache/nginx && \
 
 # Expose port 80 for nginx (internal port, host port configurable via environment)
 # Note: Nginx always runs on port 80 internally, host port is set in docker-compose/docker run
-# For production, map host port 3003 to container port 80
+# For production, map host port 3000 to container port 80
 EXPOSE 80
 
 # Health check - check nginx on port 80 (internal)
