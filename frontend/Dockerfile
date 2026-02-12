@@ -54,10 +54,13 @@ RUN --mount=from=builder,source=/app/public,target=/source/public \
 # Copy Next.js build output for 'next start' command
 # Copy .next directory (required for next start)
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
-# Copy package.json and node_modules from builder (includes Next.js)
+# Copy package.json
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 # Copy node_modules from builder (includes Next.js CLI)
+# Only copy production dependencies to reduce image size
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+# Ensure node_modules/.bin is in PATH for next command
+ENV PATH="/app/node_modules/.bin:${PATH}"
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
@@ -88,7 +91,7 @@ RUN mkdir -p /etc/supervisor/conf.d && \
     echo 'user=root' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo '' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo '[program:nextjs]' >> /etc/supervisor/conf.d/supervisord.conf && \
-    echo 'command=sh -c "cd /app && next start -H 0.0.0.0 -p 3000"' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'command=sh -c "cd /app && npx next start -H 0.0.0.0 -p 3000"' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo 'directory=/app' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo 'user=nextjs' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo 'autostart=true' >> /etc/supervisor/conf.d/supervisord.conf && \
