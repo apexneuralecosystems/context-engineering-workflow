@@ -7,7 +7,7 @@ import DocumentUpload from '@/components/DocumentUpload'
 import { initializeAssistant, getAssistantStatus, AssistantStatus } from '@/lib/api'
 import Link from 'next/link'
 
-export default function AppPage() {
+export default function AssistantPage() {
   const [assistantStatus, setAssistantStatus] = useState<AssistantStatus>({
     initialized: false,
     document_processed: false,
@@ -89,7 +89,7 @@ export default function AppPage() {
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Home</span>
           </Link>
-          
+
           <div className="text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
               <Bot className="w-10 h-10 text-primary-600 dark:text-primary-400" />

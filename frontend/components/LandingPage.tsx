@@ -88,7 +88,7 @@ export default function LandingPage() {
             <button
               onClick={() => {
                 setIsNavigating(true)
-                router.push('/app')
+                router.push('/assistant')
               }}
               disabled={isNavigating}
               className="px-8 py-4 bg-primary-600 hover:bg-primary-700 disabled:bg-primary-500 disabled:cursor-wait text-white rounded-lg font-semibold text-lg transition-all transform hover:scale-105 disabled:transform-none flex items-center gap-2 shadow-lg disabled:opacity-75"
@@ -227,7 +227,7 @@ export default function LandingPage() {
           <button
             onClick={() => {
               setIsNavigating(true)
-              router.push('/app')
+              router.push('/assistant')
             }}
             disabled={isNavigating}
             className="inline-flex items-center gap-2 px-8 py-4 bg-primary-600 hover:bg-primary-700 disabled:bg-primary-500 disabled:cursor-wait text-white rounded-lg font-semibold text-lg transition-all transform hover:scale-105 disabled:transform-none shadow-lg disabled:opacity-75"

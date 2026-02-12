@@ -42,14 +42,14 @@ os.environ["OPENROUTER_APP_NAME"] = os.getenv("OPENROUTER_APP_NAME", "Research A
 
 # Log configuration - CRITICAL for debugging production issues
 print(f"\n{'='*80}")
-print("🚀 OpenRouter Configuration (Pre-import) - PRODUCTION DEBUG:")
+print("OpenRouter Configuration (Pre-import) - PRODUCTION DEBUG:")
 print(f"{'='*80}")
-print(f"  ✅ OPENROUTER_API_KEY: SET ({len(openrouter_key)} chars)")
-print(f"  ✅ OPENAI_API_KEY: {openrouter_key[:20]}... (OpenRouter key, {len(openrouter_key)} chars)")
-print(f"  ✅ OPENAI_API_BASE: {os.environ.get('OPENAI_API_BASE')}")
-print(f"  ✅ LITELLM_API_BASE: {os.environ.get('LITELLM_API_BASE')}")
-print(f"  📍 Current working directory: {os.getcwd()}")
-print(f"  📍 Python path: {os.sys.path[:3]}...")
+print(f"  [OK] OPENROUTER_API_KEY: SET ({len(openrouter_key)} chars)")
+print(f"  [OK] OPENAI_API_KEY: {openrouter_key[:20]}... (OpenRouter key, {len(openrouter_key)} chars)")
+print(f"  [OK] OPENAI_API_BASE: {os.environ.get('OPENAI_API_BASE')}")
+print(f"  [OK] LITELLM_API_BASE: {os.environ.get('LITELLM_API_BASE')}")
+print(f"  [INFO] Current working directory: {os.getcwd()}")
+print(f"  [INFO] Python path: {os.sys.path[:3]}...")
 print(f"{'='*80}\n")
 import sys
 sys.stdout.flush()  # Force flush to ensure logs appear immediately
@@ -185,26 +185,26 @@ def get_assistant() -> ResearchAssistantFlow:
             
             # Log final configuration after assistant creation
             print(f"\n{'='*80}")
-            print("✅ Assistant Created - Final OpenRouter Configuration (PRODUCTION DEBUG):")
+            print("[OK] Assistant Created - Final OpenRouter Configuration (PRODUCTION DEBUG):")
             print(f"{'='*80}")
             openai_key = os.getenv('OPENAI_API_KEY', 'NOT SET')
             openai_base = os.environ.get('OPENAI_API_BASE', 'NOT SET')
             litellm_base = os.environ.get('LITELLM_API_BASE', 'NOT SET')
             
-            print(f"  🔑 OPENAI_API_KEY: {openai_key[:20] if openai_key != 'NOT SET' else 'NOT SET'}... ({len(openai_key) if openai_key != 'NOT SET' else 0} chars)")
-            print(f"  🌐 OPENAI_API_BASE: {openai_base}")
-            print(f"  🌐 LITELLM_API_BASE: {litellm_base}")
+            print(f"  [KEY] OPENAI_API_KEY: {openai_key[:20] if openai_key != 'NOT SET' else 'NOT SET'}... ({len(openai_key) if openai_key != 'NOT SET' else 0} chars)")
+            print(f"  [BASE] OPENAI_API_BASE: {openai_base}")
+            print(f"  [BASE] LITELLM_API_BASE: {litellm_base}")
             
             # Verify configuration is correct
             if openai_base != "https://openrouter.ai/api/v1":
-                print(f"  ❌ ERROR: OPENAI_API_BASE is NOT set to OpenRouter URL!")
+                print(f"  [ERROR] OPENAI_API_BASE is NOT set to OpenRouter URL!")
             else:
-                print(f"  ✅ OPENAI_API_BASE correctly set to OpenRouter")
+                print(f"  [OK] OPENAI_API_BASE correctly set to OpenRouter")
             
             if litellm_base != "https://openrouter.ai/api/v1":
-                print(f"  ❌ ERROR: LITELLM_API_BASE is NOT set to OpenRouter URL!")
+                print(f"  [ERROR] LITELLM_API_BASE is NOT set to OpenRouter URL!")
             else:
-                print(f"  ✅ LITELLM_API_BASE correctly set to OpenRouter")
+                print(f"  [OK] LITELLM_API_BASE correctly set to OpenRouter")
             
             print(f"{'='*80}\n")
             import sys
