@@ -1,10 +1,13 @@
 import axios from 'axios'
 import { getUserFriendlyError } from './errorHandler'
 
-// Get API URL from environment variable (required)
-const API_URL = process.env.NEXT_PUBLIC_API_URL
-if (!API_URL) {
-  throw new Error('NEXT_PUBLIC_API_URL environment variable is required. Please set it in .env.local file.')
+// Get API URL from environment variable (lazy check - only when needed)
+function getApiUrl(): string {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL
+  if (!API_URL) {
+    throw new Error('NEXT_PUBLIC_API_URL environment variable is required. Please set it in .env.local file or as a build argument.')
+  }
+  return API_URL
 }
 
 // Standard API Response Format
@@ -72,7 +75,7 @@ function handleResponse<T>(response: APIResponse<T>): T {
 export async function initializeAssistant(): Promise<AssistantStatus> {
   try {
     const response = await axios.post<APIResponse<AssistantStatus>>(
-      `${API_URL}/api/initialize`,
+      `${getApiUrl()}/api/initialize`,
       {},
       {
         headers: {
@@ -96,7 +99,7 @@ export async function uploadDocument(file: File): Promise<DocumentUploadResponse
     formData.append('file', file)
 
     const response = await axios.post<APIResponse<DocumentUploadResponse>>(
-      `${API_URL}/api/upload-document`,
+      `${getApiUrl()}/api/upload-document`,
       formData,
       {
         headers: {
@@ -117,7 +120,7 @@ export async function uploadDocument(file: File): Promise<DocumentUploadResponse
 export async function searchQuery(query: string, user_id?: string, thread_id?: string): Promise<QueryResponse> {
   try {
     const response = await axios.post<APIResponse<QueryResponse>>(
-      `${API_URL}/api/query`,
+      `${getApiUrl()}/api/query`,
       { 
         query,
         user_id: user_id || 'web_user',
@@ -142,7 +145,7 @@ export async function searchQuery(query: string, user_id?: string, thread_id?: s
 export async function getAssistantStatus(): Promise<AssistantStatus> {
   try {
     const response = await axios.get<APIResponse<AssistantStatus>>(
-      `${API_URL}/api/status`,
+      `${getApiUrl()}/api/status`,
       {
         timeout: 5000,
       }
@@ -162,7 +165,7 @@ export async function getAssistantStatus(): Promise<AssistantStatus> {
  */
 export async function healthCheck(): Promise<boolean> {
   try {
-    const response = await axios.get<APIResponse>(`${API_URL}/health`, {
+    const response = await axios.get<APIResponse>(`${getApiUrl()}/health`, {
       timeout: 5000,
     })
     return response.data.status === true

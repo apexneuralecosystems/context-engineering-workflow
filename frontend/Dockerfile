@@ -17,7 +17,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Set build-time environment variable (can be overridden)
-ARG NEXT_PUBLIC_API_URL
+# Provide a default value to prevent build failures
+ARG NEXT_PUBLIC_API_URL=http://localhost:8003
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
 # Ensure public directory exists (Next.js public folder is optional)

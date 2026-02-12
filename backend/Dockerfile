@@ -56,4 +56,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 
 # Run the application
 # Note: Using sh -c to properly expand environment variable
-CMD sh -c "python -m uvicorn api_server:app --host 0.0.0.0 --port ${API_PORT} --workers 1"
+# Default to 8003 if API_PORT is not set
+CMD sh -c "python -m uvicorn api_server:app --host 0.0.0.0 --port ${API_PORT:-8003} --workers 1"
