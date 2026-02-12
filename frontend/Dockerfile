@@ -36,9 +36,7 @@ RUN apk add --no-cache nodejs npm supervisor wget
 WORKDIR /app
 
 ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1 \
-    PORT=3000 \
-    HOSTNAME="127.0.0.1"
+    NEXT_TELEMETRY_DISABLED=1
 
 # Create a non-root user for Next.js
 RUN addgroup -g 1001 -S nodejs && \
@@ -53,23 +51,13 @@ RUN --mount=from=builder,source=/app/public,target=/source/public \
         chown -R nextjs:nodejs ./public; \
     fi
 
-# Copy standalone build output (required for Next.js standalone mode)
-# Ensure server.js exists and is executable
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Verify server.js exists (standalone mode should create it)
-# Next.js standalone mode creates server.js in the .next/standalone directory
-RUN if [ ! -f /app/server.js ]; then \
-        echo "WARNING: server.js not found. Checking build output..." && \
-        ls -la /app/ && \
-        echo "Contents of /app:" && \
-        find /app -name "server.js" 2>/dev/null || echo "server.js not found anywhere"; \
-    else \
-        echo "✓ server.js found at /app/server.js" && \
-        chmod +x /app/server.js && \
-        echo "✓ server.js is executable"; \
-    fi
+# Copy Next.js build output for 'next start' command
+# Copy .next directory (required for next start)
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+# Copy package.json and node_modules from builder (includes Next.js)
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+# Copy node_modules from builder (includes Next.js CLI)
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
@@ -79,7 +67,7 @@ RUN echo '#!/bin/sh' > /usr/local/bin/wait-for-nextjs.sh && \
     echo 'set -e' >> /usr/local/bin/wait-for-nextjs.sh && \
     echo 'echo "Waiting for Next.js server to be ready on port 3000..."' >> /usr/local/bin/wait-for-nextjs.sh && \
     echo 'for i in 1 2 3 4 5 6 7 8 9 10; do' >> /usr/local/bin/wait-for-nextjs.sh && \
-    echo '  if nc -z 127.0.0.1 3000 2>/dev/null || wget --quiet --tries=1 --spider http://127.0.0.1:3000 2>/dev/null; then' >> /usr/local/bin/wait-for-nextjs.sh && \
+    echo '  if nc -z 0.0.0.0 3000 2>/dev/null || wget --quiet --tries=1 --spider http://127.0.0.1:3000 2>/dev/null; then' >> /usr/local/bin/wait-for-nextjs.sh && \
     echo '    echo "✓ Next.js is ready on port 3000!"' >> /usr/local/bin/wait-for-nextjs.sh && \
     echo '    exit 0' >> /usr/local/bin/wait-for-nextjs.sh && \
     echo '  fi' >> /usr/local/bin/wait-for-nextjs.sh && \
@@ -100,7 +88,7 @@ RUN mkdir -p /etc/supervisor/conf.d && \
     echo 'user=root' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo '' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo '[program:nextjs]' >> /etc/supervisor/conf.d/supervisord.conf && \
-    echo 'command=sh -c "export PORT=3000 HOSTNAME=127.0.0.1 NODE_ENV=production && node server.js"' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'command=sh -c "cd /app && next start -H 0.0.0.0 -p 3000"' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo 'directory=/app' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo 'user=nextjs' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo 'autostart=true' >> /etc/supervisor/conf.d/supervisord.conf && \
